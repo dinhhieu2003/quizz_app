@@ -1,6 +1,5 @@
-package com.example.quizz_app.view;
+package com.study.quizzapp.home;
 
-import android.app.Dialog;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,7 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.example.quizz_app.R;
+import com.study.quizzapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity
         imageView = findViewById(R.id.card1);
         floatingActionButton = findViewById(R.id.chatHead);
 
-        //fragment for term & conditions!
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
