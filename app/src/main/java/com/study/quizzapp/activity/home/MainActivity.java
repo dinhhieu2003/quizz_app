@@ -1,4 +1,4 @@
-package com.study.quizzapp.home;
+package com.study.quizzapp.activity.home;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;

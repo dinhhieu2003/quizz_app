@@ -64,6 +64,11 @@ dependencies {
     implementation ("com.google.firebase:firebase-inappmessaging-display")
     implementation ("com.firebaseui:firebase-ui-database:8.0.2")
 
-    // other
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // loading indicator
+    implementation("com.wang.avi:library:2.1.3")
 
 }
