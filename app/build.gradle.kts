@@ -68,7 +68,4 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 
-    // loading indicator
-    implementation("com.wang.avi:library:2.1.3")
-
 }
