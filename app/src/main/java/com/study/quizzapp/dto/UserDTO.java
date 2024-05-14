@@ -1,19 +1,22 @@
-package com.study.quizzapp.model;
+package com.study.quizzapp.dto;
 
-public class User {
+import com.study.quizzapp.model.Role;
+
+public class UserDTO {
     private long id;
     private String fname;
     private int age;
     private String email;
-    private String password;
     private Role role;
 
-    public User(long id, String fname, int age, String email, String password, Role role) {
+    public UserDTO() {
+    }
+
+    public UserDTO(long id, String fname, int age, String email, Role role) {
         this.id = id;
         this.fname = fname;
         this.age = age;
         this.email = email;
-        this.password = password;
         this.role = role;
     }
 
@@ -47,14 +50,6 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public Role getRole() {

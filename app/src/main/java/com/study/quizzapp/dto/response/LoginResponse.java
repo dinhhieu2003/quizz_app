@@ -1,7 +1,8 @@
-package com.study.quizzapp.dto;
+package com.study.quizzapp.dto.response;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.study.quizzapp.dto.UserDTO;
 import com.study.quizzapp.model.User;
 
 import java.io.Serializable;
@@ -15,7 +16,13 @@ public class LoginResponse implements Serializable {
     private String message;
     @SerializedName("user")
     @Expose
-    private User user;
+    private UserDTO user;
+
+    public LoginResponse(Boolean error, String message, UserDTO user) {
+        this.error = error;
+        this.message = message;
+        this.user = user;
+    }
 
     public Boolean getError() {
         return error;
@@ -33,11 +40,11 @@ public class LoginResponse implements Serializable {
         this.message = message;
     }
 
-    public User getUser() {
+    public UserDTO getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDTO user) {
         this.user = user;
     }
 }

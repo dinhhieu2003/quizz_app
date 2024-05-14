@@ -35,6 +35,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -53,19 +54,12 @@ dependencies {
     // circle image dependency
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
-    // firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.google.firebase:firebase-auth")
-    implementation ("com.google.firebase:firebase-database")
-    implementation ("com.firebaseui:firebase-ui-auth:8.0.2")
-    implementation ("com.google.firebase:firebase-storage")
-    implementation ("com.google.firebase:firebase-messaging")
-    implementation ("com.google.firebase:firebase-inappmessaging-display")
-    implementation ("com.firebaseui:firebase-ui-database:8.0.2")
-
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+    // toasty
+    implementation ("com.github.GrenderG:Toasty:1.5.2")
+
 
 }

@@ -50,7 +50,7 @@
             android:gravity="center"
             android:text="@string/Welcome"
             android:textAllCaps="true"
-            android:textColor="@color/cardview_light_background"
+            android:textColor="@color/pink_glamour"
             android:textSize="15sp" />
 
 
