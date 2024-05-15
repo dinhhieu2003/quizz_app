@@ -62,5 +62,7 @@ dependencies {
     // toasty
     implementation ("com.github.GrenderG:Toasty:1.5.2")
 
+    // Awesome Splash
+    implementation ("com.github.ViksaaSkool:AwesomeSplash:1.0.0")
 
 }
