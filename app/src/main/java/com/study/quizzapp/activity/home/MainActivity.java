@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.study.quizzapp.activity.auth.LoginActivity;
+import com.study.quizzapp.activity.test.ViewTestActivity;
 import com.study.quizzapp.model.Role;
 import com.study.quizzapp.model.User;
 import com.study.quizzapp.sharedpref.SharedPrefManager;
@@ -118,8 +119,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_test) {
             if (isNetworkAvailable(MainActivity.this)) {
-//                startActivity(new Intent(MainActivity.this, Tests.class));
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                startActivity(new Intent(MainActivity.this, ViewTestActivity.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             else
                 alertNoConnection();

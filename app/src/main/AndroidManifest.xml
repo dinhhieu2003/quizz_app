@@ -14,7 +14,7 @@
         android:normalScreens="true"
         android:resizeable="true"
         android:smallScreens="true"
-        android:xlargeScreens="true"></supports-screens>
+        android:xlargeScreens="true" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +25,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="label">
+        <activity
+            android:name=".activity.test.DoTestActivity"
+            android:exported="false" />
         <activity
             android:name=".activity.test.ViewTestActivity"
             android:exported="false" />

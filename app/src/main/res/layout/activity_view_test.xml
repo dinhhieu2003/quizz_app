@@ -25,6 +25,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <ProgressBar
+        android:id="@+id/progressbar_test"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"/>
+
     <include layout="@layout/content_tests" />
 
 </RelativeLayout>

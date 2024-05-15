@@ -1,6 +1,50 @@
 package com.study.quizzapp.model;
 
-public class Test {
+import java.io.Serializable;
+import java.util.List;
+
+public class Test implements Serializable {
     private long id;
     private String name;
+    private List<Question> questionList;
+    private int time;
+
+    public Test(long id, String name, List<Question> questionList, int time) {
+        this.id = id;
+        this.name = name;
+        this.questionList = questionList;
+        this.time = time;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Question> getQuestionList() {
+        return questionList;
+    }
+
+    public void setQuestionList(List<Question> questionList) {
+        this.questionList = questionList;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 }
