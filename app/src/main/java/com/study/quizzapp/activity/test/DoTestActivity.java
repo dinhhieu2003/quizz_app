@@ -167,12 +167,12 @@ public class DoTestActivity extends AppCompatActivity {
             arrayList.add(questions.get(i).getQuestion());
         }
 
-        try {
-            mDatabase.child("Results").child(((Test) getIntent().getExtras().get("Questions")).getName())
-                    .child(auth.getUid()).setValue(score);
-        }catch (Exception e){
-            Log.e("Result Update Failed " ,e.getMessage());
-        }
+//        try {
+//            mDatabase.child("Results").child(((Test) getIntent().getExtras().get("Questions")).getName())
+//                    .child(auth.getUid()).setValue(score);
+//        }catch (Exception e){
+//            Log.e("Result Update Failed " ,e.getMessage());
+//        }
     }
 
     void dialogStart() {
