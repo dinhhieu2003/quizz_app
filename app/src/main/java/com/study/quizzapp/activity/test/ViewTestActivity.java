@@ -133,7 +133,7 @@ public class ViewTestActivity extends AppCompatActivity {
                     setImageDrawable(ContextCompat.getDrawable(mContext,R.drawable.ic_appicon));
 
             ((TextView)listItem.findViewById(R.id.item_textView))
-                    .setText(dataList.get(position).getName()+" : "+dataList.get(position).getTime()+"Min");
+                    .setText(dataList.get(position).getName()+" : "+dataList.get(position).getTime()+" phút");
 
             ((Button)listItem.findViewById(R.id.item_button)).setText("Làm bài");
 

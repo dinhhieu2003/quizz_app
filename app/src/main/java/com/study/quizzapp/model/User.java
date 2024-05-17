@@ -1,5 +1,7 @@
 package com.study.quizzapp.model;
 
+import java.util.List;
+
 public class User {
     private long id;
     private String fname;
@@ -7,6 +9,7 @@ public class User {
     private String email;
     private String password;
     private Role role;
+    private List<ResultTest> resultList;
 
     public User(long id, String fname, int age, String email, String password, Role role) {
         this.id = id;
@@ -15,6 +18,16 @@ public class User {
         this.email = email;
         this.password = password;
         this.role = role;
+    }
+
+    public User(long id, String fname, int age, String email, String password, Role role, List<ResultTest> resultList) {
+        this.id = id;
+        this.fname = fname;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.resultList = resultList;
     }
 
     public long getId() {
@@ -63,5 +76,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<ResultTest> getResultList() {
+        return resultList;
+    }
+
+    public void setResultList(List<ResultTest> resultList) {
+        this.resultList = resultList;
     }
 }

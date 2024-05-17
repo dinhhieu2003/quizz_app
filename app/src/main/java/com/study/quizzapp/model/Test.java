@@ -7,12 +7,14 @@ public class Test implements Serializable {
     private long id;
     private String name;
     private List<Question> questionList;
+    private List<ResultTest> resultList;
     private int time;
 
-    public Test(long id, String name, List<Question> questionList, int time) {
+    public Test(long id, String name, List<Question> questionList, List<ResultTest> resultList, int time) {
         this.id = id;
         this.name = name;
         this.questionList = questionList;
+        this.resultList = resultList;
         this.time = time;
     }
 
@@ -38,6 +40,14 @@ public class Test implements Serializable {
 
     public void setQuestionList(List<Question> questionList) {
         this.questionList = questionList;
+    }
+
+    public List<ResultTest> getResultList() {
+        return resultList;
+    }
+
+    public void setResultList(List<ResultTest> resultList) {
+        this.resultList = resultList;
     }
 
     public int getTime() {

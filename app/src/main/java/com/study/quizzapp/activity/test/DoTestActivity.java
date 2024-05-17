@@ -1,5 +1,6 @@
 package com.study.quizzapp.activity.test;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,9 +35,15 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.study.quizzapp.R;
+import com.study.quizzapp.api.AuthApi;
+import com.study.quizzapp.api.ResultApi;
 import com.study.quizzapp.model.Question;
+import com.study.quizzapp.model.ResultTest;
 import com.study.quizzapp.model.Test;
+import com.study.quizzapp.model.User;
+import com.study.quizzapp.retrofit.RetrofitService;
 import com.study.quizzapp.service.NotificationService;
+import com.study.quizzapp.sharedpref.SharedPrefManager;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,33 +53,42 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import es.dmoral.toasty.Toasty;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DoTestActivity extends AppCompatActivity {
-    ArrayList<Question> questions;
-    String []answers;
-    Toolbar toolbar;
-    DiscreteScrollView scrollView;
-    LinearLayout indexLayout;
-    GridView quesGrid;
-    ArrayList<String> list;
-    ArrayList<String> arrayList;
-    int flag_controller = 1;
-    long timer;// =((Test) getIntent().getExtras().get("Questions")).getTime()*60*1000;
-    popGridAdapter popGrid;
-    Button next,prev;
-    TextView textView;
+    private ArrayList<Question> questions = new ArrayList<>();
+    private String []answers;
+    private Toolbar toolbar;
+    private DiscreteScrollView scrollView;
+    private LinearLayout indexLayout;
+    private GridView quesGrid;
+    private ArrayList<String> list;
+    private ArrayList<String> arrayList;
+    private int flag_controller = 1;
+    private long timer;// =((Test) getIntent().getExtras().get("Questions")).getTime()*60*1000;
+    private popGridAdapter popGrid;
+    private Button next,prev;
+    private TextView textView;
     private String TESTNAME;
     private RadioGroup group;
     private int countPaused = 0;
+    private ResultApi restMethod;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_do_test);
+
         List<Question> listQuestion = ((Test) getIntent().getExtras().get("Questions")).getQuestionList();
-        for(Question question : listQuestion) {
-            questions.add(question);
+        for(Question ques: listQuestion) {
+            Log.d("Do Test", ques.getQuestion());
         }
+        Log.d("Size test", String.valueOf(listQuestion.size()));
+        questions.addAll(listQuestion);
         TESTNAME = (String) getIntent().getExtras().get("TESTNAME");
         toolbar=findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(0xFFFFFF);
@@ -90,7 +106,7 @@ public class DoTestActivity extends AppCompatActivity {
                 if(scrollView.getCurrentItem()==questions.size()-1){
                     showPopUp();
                 }else {
-                    //setNextPrevButton(scrollView.getCurrentItem() + 1);
+                    setNextPrevButton(scrollView.getCurrentItem() + 1);
                     scrollView.smoothScrollToPosition(scrollView.getCurrentItem() + 1);
                 }
             }
@@ -101,7 +117,7 @@ public class DoTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if(scrollView.getCurrentItem()!=0){
-                    //setNextPrevButton(scrollView.getCurrentItem()-1);
+                    setNextPrevButton(scrollView.getCurrentItem()-1);
                     scrollView.smoothScrollToPosition(scrollView.getCurrentItem()-1);
                 }
             }
@@ -128,20 +144,27 @@ public class DoTestActivity extends AppCompatActivity {
         });
 
         timer=((Test) getIntent().getExtras().get("Questions")).getTime()*60*1000;
+
+        OnBackPressedCallback onBackPressedCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showPopUp();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this,onBackPressedCallback);
     }
     void showPopUp(){
         AlertDialog.Builder builder=new AlertDialog.Builder(DoTestActivity.this);
-        builder.setMessage("Do you want to submit?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        builder.setMessage("Bạn có chắc muốn nộp bài?");
+        builder.setPositiveButton("Chắc", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 submit();
-//                setAlertDialog(answerText);
                 dialogStart();
             }
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Thôi", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.cancel();
@@ -163,23 +186,41 @@ public class DoTestActivity extends AppCompatActivity {
             }
             String temp = (answers[i]!=null) ? answers[i]+") ":"null) ";
 
-            list.add("Your choice ("+ temp + "Right choice is("+ questions.get(i).getAnswer()+")");
+            list.add("Bạn chọn ("+ temp + "Đáp án đúng là("+ questions.get(i).getAnswer()+")");
             arrayList.add(questions.get(i).getQuestion());
         }
 
-//        try {
-//            mDatabase.child("Results").child(((Test) getIntent().getExtras().get("Questions")).getName())
-//                    .child(auth.getUid()).setValue(score);
-//        }catch (Exception e){
-//            Log.e("Result Update Failed " ,e.getMessage());
-//        }
+        try {
+            ResultTest resultTest = new ResultTest();
+            resultTest.setScore(score);
+            User user = SharedPrefManager.getInstance(this).getUser();
+            Test test = (Test) getIntent().getExtras().get("Questions");
+            resultTest.setUser(user);
+            resultTest.setTest(test);
+            restMethod = RetrofitService.getRetrofit().create(ResultApi.class);
+            restMethod.addResultTest(resultTest).enqueue(new Callback<ResultTest>() {
+                @Override
+                public void onResponse(Call<ResultTest> call, Response<ResultTest> response) {
+                    Log.d("Submit success", response.body().getTest().getName());
+                    Toasty.success(DoTestActivity.this,"Bài của bạn đã nộp thành công rồi",
+                            Toasty.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onFailure(Call<ResultTest> call, Throwable throwable) {
+                    Toasty.error(DoTestActivity.this,"Bài của bạn đã nộp thất bại rồi",
+                            Toasty.LENGTH_SHORT).show();
+                    Log.d("Submit failed", throwable.getMessage());
+                }
+            });
+        }catch (Exception e){
+            Log.e("Result Update Failed " ,e.getMessage());
+        }
     }
 
     void dialogStart() {
-
         final AlertDialog.Builder builderSingle = new AlertDialog.Builder(DoTestActivity.this);
         builderSingle.setIcon(R.mipmap.ic_launcher_round);
-        builderSingle.setTitle(TESTNAME+" Answers");
+        builderSingle.setTitle(TESTNAME+" Đáp án");
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>
                 (DoTestActivity.this, android.R.layout.select_dialog_singlechoice);
         final ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>
@@ -193,7 +234,7 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         builderSingle.setCancelable(false);
-        builderSingle.setNegativeButton("Done!", new DialogInterface.OnClickListener() {
+        builderSingle.setNegativeButton("Xác nhận!", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
@@ -237,10 +278,11 @@ public class DoTestActivity extends AppCompatActivity {
         super.onResume();
         stopService(new Intent(DoTestActivity.this, NotificationService.class));
         if(countPaused>2) {
-            Toasty.success(DoTestActivity.this,"Thank you! Your response has been submitted.",
+            Toasty.success(DoTestActivity.this,"Cảm ơn! Bài của bạn đã được nộp.",
                     Toasty.LENGTH_SHORT).show();
             countPaused = -1000;
-            submit();
+            Log.d("On resume", "On");
+//            submit();
             dialogStart();
         }
     }
@@ -257,21 +299,15 @@ public class DoTestActivity extends AppCompatActivity {
             prev.setText("");
         }else {
 //            prev.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-            prev.setText("Previous");
+            prev.setText("Câu trước");
         }
         if(pos==questions.size()-1){
-            next.setText("Submit");
+            next.setText("Nộp bài");
 //            next.setBackgroundColor(getResources().getColor(android.R.color.holo_red_dark));
         }else {
-            next.setText("Next");
+            next.setText("Câu tiếp");
 //            next.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        showPopUp();
     }
 
     @Override
@@ -368,7 +404,7 @@ public class DoTestActivity extends AppCompatActivity {
             holder.r2.setText(data.get(position).getOpt_B());
             holder.r3.setText(data.get(position).getOpt_C());
             holder.r4.setText(data.get(position).getOpt_D());
-            holder.r5.setText("Clear Selected");
+            holder.r5.setText("Xóa lựa chọn");
 
             holder.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -490,7 +526,7 @@ public class DoTestActivity extends AppCompatActivity {
             (convertView).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //setNextPrevButton(i);
+                    setNextPrevButton(i);
                     scrollView.smoothScrollToPosition(i);
                 }
             });
@@ -524,7 +560,6 @@ public class DoTestActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        submit();
         super.onDestroy();
     }
 }

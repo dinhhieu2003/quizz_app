@@ -26,6 +26,12 @@
         android:usesCleartextTraffic="true"
         tools:replace="label">
         <activity
+            android:name=".activity.result.ResultDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.result.ResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.test.DoTestActivity"
             android:exported="false" />
         <activity

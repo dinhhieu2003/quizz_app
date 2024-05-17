@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.study.quizzapp.activity.auth.LoginActivity;
+import com.study.quizzapp.activity.result.ResultActivity;
 import com.study.quizzapp.activity.test.ViewTestActivity;
 import com.study.quizzapp.model.Role;
 import com.study.quizzapp.model.User;
@@ -126,10 +127,10 @@ public class MainActivity extends AppCompatActivity
                 alertNoConnection();
         } else if (id == R.id.nav_result) {
             if ( isNetworkAvailable(MainActivity.this)) {
-//                Intent intent = new Intent(MainActivity.this, ResultsAdmin.class);
-//                intent.putExtra("ISADMIN",isAdmin);
-//                startActivity(intent);
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+                intent.putExtra("ISADMIN",isAdmin);
+                startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             else
                 alertNoConnection();
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity
 //                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             else if (isNetworkAvailable(MainActivity.this))
-                Toasty.error(getApplicationContext(), "You are not Admin!", Toasty.LENGTH_SHORT).show();
+                Toasty.error(getApplicationContext(), "Bạn không phải Admin!", Toasty.LENGTH_SHORT).show();
             else
                 alertNoConnection();
         } else if (id == R.id.nav_respass) {
