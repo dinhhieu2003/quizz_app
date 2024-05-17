@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,10 +25,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.study.quizzapp.R;
+import com.study.quizzapp.activity.user.UserDetailActivity;
 import com.study.quizzapp.api.ResultApi;
 import com.study.quizzapp.model.ResultTest;
 import com.study.quizzapp.model.Test;
 import com.study.quizzapp.retrofit.RetrofitService;
+import com.study.quizzapp.sharedpref.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +46,7 @@ public class ResultDetailActivity extends AppCompatActivity {
     ArrayList<ResultTest> result=new ArrayList<>();
     private String testName;
     private int lastPos = -1;
+    private int count_test = 0;
     public boolean isAdmin = false;
     private ResultApi restMethod;
     private Test currentTest;
@@ -84,30 +88,56 @@ public class ResultDetailActivity extends AppCompatActivity {
     private void getResults() {
         // get toan bo result theo test id tu TEST
         restMethod = RetrofitService.getRetrofit().create(ResultApi.class);
-        restMethod.getAllResultByTestId(currentTest.getId()).enqueue(new Callback<List<ResultTest>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<ResultTest>> call, @NonNull Response<List<ResultTest>> response) {
-                List<ResultTest> listResult;
-                if(response.body() != null) {
-                    Log.d("Get result success", response.message());
-                    listResult = response.body();
-                    result.addAll(listResult);
-                    testAdapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.GONE);
+        if(isAdmin) {
+            restMethod.getAllResultByTestId(currentTest.getId()).enqueue(new Callback<List<ResultTest>>() {
+                @Override
+                public void onResponse(@NonNull Call<List<ResultTest>> call, @NonNull Response<List<ResultTest>> response) {
+                    List<ResultTest> listResult;
+                    if(response.body() != null) {
+                        Log.d("Get result success", response.message());
+                        listResult = response.body();
+                        result.addAll(listResult);
+                        testAdapter.notifyDataSetChanged();
+                        progressBar.setVisibility(View.GONE);
 
-                } else {
-                    Log.d("Get result failed", response.message());
+                    } else {
+                        Log.d("Get result failed", response.message());
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<List<ResultTest>> call, @NonNull Throwable throwable) {
+                    Log.d("Get result failed on Failure", throwable.getMessage());
                     progressBar.setVisibility(View.GONE);
                 }
-            }
+            });
+        } else {
+            restMethod.getAllResultByTestIdAndUserId(currentTest.getId(), SharedPrefManager.getInstance(this).getUser().getId())
+                    .enqueue(new Callback<List<ResultTest>>() {
+                        @Override
+                        public void onResponse(Call<List<ResultTest>> call, Response<List<ResultTest>> response) {
+                            List<ResultTest> listResult;
+                            if(response.body() != null) {
+                                Log.d("Get result success", response.message());
+                                listResult = response.body();
+                                result.addAll(listResult);
+                                testAdapter.notifyDataSetChanged();
+                                progressBar.setVisibility(View.GONE);
 
-            @Override
-            public void onFailure(@NonNull Call<List<ResultTest>> call, @NonNull Throwable throwable) {
-                Log.d("Get result failed on Failure", throwable.getMessage());
-                progressBar.setVisibility(View.GONE);
-            }
-        });
+                            } else {
+                                Log.d("Get result failed", response.message());
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(Call<List<ResultTest>> call, Throwable throwable) {
+                            Log.d("Get result failed on Failure", throwable.getMessage());
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+        }
     }
 
 
@@ -121,6 +151,7 @@ public class ResultDetailActivity extends AppCompatActivity {
             dataList = list;
         }
 
+        @SuppressLint("SetTextI18n")
         @NonNull
         @Override
         public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -142,20 +173,21 @@ public class ResultDetailActivity extends AppCompatActivity {
                 ((TextView) listItem.findViewById(R.id.item_textView)).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        Intent intent = new Intent(ResultsAdminDetailed.this, GetDetailReport.class);
-//                        intent.putExtra("USERID", dataList.get(position).userID);
-//                        intent.putExtra("DetailID", dataList.get(position).user.name);
-//                        intent.putExtra("DetailBranch", dataList.get(position).user.branch);
-//                        intent.putExtra("DetailSem", dataList.get(position).user.semester);
-//                        intent.putExtra("DetailSec", dataList.get(position).user.sect);
-//                        intent.putExtra("TestNAME", testName);
-//                        intent.putExtra("Marks", dataList.get(position).score);
-//                        startActivity(intent);
+                        Intent intent = new Intent(ResultDetailActivity.this, UserDetailActivity.class);
+                        intent.putExtra("USERID", dataList.get(position).getUser().getId());
+                        intent.putExtra("USERFNAME", dataList.get(position).getUser().getFname());
+                        intent.putExtra("USERAGE", dataList.get(position).getUser().getAge());
+                        intent.putExtra("USEREMAIL", dataList.get(position).getUser().getEmail());
+                        intent.putExtra("TestNAME", testName);
+                        intent.putExtra("Marks", String.valueOf(dataList.get(position).getScore())
+                                + "/" + String.valueOf(currentTest.getQuestionList().size()));
+                        startActivity(intent);
 
                     }
                 });
             }
-            ((Button)listItem.findViewById(R.id.item_button)).setText(String.valueOf(dataList.get(position).getScore()));
+            ((Button)listItem.findViewById(R.id.item_button)).setText(String.valueOf(dataList.get(position).getScore())
+                    + "/" + String.valueOf(currentTest.getQuestionList().size()));
             return listItem;
         }
     }

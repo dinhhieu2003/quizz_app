@@ -28,15 +28,31 @@ import com.study.quizzapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.study.quizzapp.activity.admin.quiz.create_quiz_main;
 import com.study.quizzapp.activity.auth.LoginActivity;
 import com.study.quizzapp.activity.result.ResultActivity;
+import com.study.quizzapp.activity.result.ResultDetailActivity;
 import com.study.quizzapp.activity.test.ViewTestActivity;
+import com.study.quizzapp.activity.user.UserDetailActivity;
+import com.study.quizzapp.activity.user.UserProfileActivity;
+import com.study.quizzapp.api.ResultApi;
+import com.study.quizzapp.model.ResultTest;
 import com.study.quizzapp.model.Role;
+import com.study.quizzapp.model.Test;
 import com.study.quizzapp.model.User;
+import com.study.quizzapp.retrofit.RetrofitService;
 import com.study.quizzapp.sharedpref.SharedPrefManager;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,6 +66,9 @@ public class MainActivity extends AppCompatActivity
     private TextView username_welcome;
     private boolean isAdmin = false;
     private User user;
+    private ArrayList<Test> result = new ArrayList<>();
+    private ResultApi restMethod_Result;
+    private List<ResultTest> listResultTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +111,36 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         username_welcome = findViewById(R.id.text_user_card);
         setWelcomeUser();
+        countTest();
+    }
+
+    private void countTest() {
+        restMethod_Result = RetrofitService.getRetrofit().create(ResultApi.class);
+        restMethod_Result.getAllResultByUserId(user.getId()).enqueue(new Callback<List<ResultTest>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ResultTest>> call, @NonNull Response<List<ResultTest>> response) {
+                result.clear();
+                listResultTest = response.body();
+                List<Test> listTest = new ArrayList<>();
+                HashSet<Long> setTest_id = new HashSet<>();
+                assert listResultTest != null;
+                for(ResultTest resultTest : listResultTest) {
+                    if(setTest_id.add(resultTest.getTest().getId())) {
+                        listTest.add(resultTest.getTest());
+                    }
+                }
+                result.addAll(listTest);
+                Log.e("The read success: " ,"su"+result.size());
+            }
+            @Override
+            public void onFailure(@NonNull Call<List<ResultTest>> call, @NonNull Throwable throwable) {
+                Log.e("The read failed: ", Objects.requireNonNull(throwable.getMessage()));
+            }
+        });
     }
 
     private void setWelcomeUser() {
-        String text = "Chao xìn " + user.getFname();
+        String text = "Xin chào " + user.getFname();
         username_welcome.setText(text);
     }
 
@@ -136,8 +181,8 @@ public class MainActivity extends AppCompatActivity
                 alertNoConnection();
         } else if (id == R.id.create_test) {
             if (isAdmin && isNetworkAvailable(MainActivity.this)) {
-//                startActivity(new Intent(MainActivity.this, create_quiz_main.class));
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                startActivity(new Intent(MainActivity.this, create_quiz_main.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             else if (isNetworkAvailable(MainActivity.this))
                 Toasty.error(getApplicationContext(), "Bạn không phải Admin!", Toasty.LENGTH_SHORT).show();
@@ -156,8 +201,14 @@ public class MainActivity extends AppCompatActivity
             finish();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         } else if (id == R.id.nav_details) {
-//            startActivity(new Intent(MainActivity.this, AddDetails.class));
-//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+            Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+            intent.putExtra("USERID",user.getId());
+            intent.putExtra("USERFNAME", user.getFname());
+            intent.putExtra("USERAGE", user.getAge());
+            intent.putExtra("USEREMAIL", user.getEmail());
+            intent.putExtra("Count", result.size());
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else if (id == R.id.about_details) {
 //            startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
 //            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);

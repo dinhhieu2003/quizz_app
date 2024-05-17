@@ -46,7 +46,8 @@ import retrofit2.Response;
 public class ResultActivity extends AppCompatActivity {
     private ListView listView;
     private ResultActivity.TestAdapter testAdapter;
-    ArrayList<Test> result = new ArrayList<>();
+    private ArrayList<Test> result = new ArrayList<>();
+    private List<ResultTest> listResultTest;
     private int lastPos = -1;
     private boolean isAdmin = false;
     private ProgressBar progressBar;
@@ -100,7 +101,7 @@ public class ResultActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(@NonNull Call<List<ResultTest>> call, @NonNull Response<List<ResultTest>> response) {
                     result.clear();
-                    List<ResultTest> listResultTest = response.body();
+                    listResultTest = response.body();
                     List<Test> listTest = new ArrayList<>();
                     HashSet<Long> setTest_id = new HashSet<>();
                     assert listResultTest != null;

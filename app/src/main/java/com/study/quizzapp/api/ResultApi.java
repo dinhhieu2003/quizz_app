@@ -27,4 +27,8 @@ public interface ResultApi {
 
     @GET("/api/v1/results/test/{id}")
     Call<List<ResultTest>> getAllResultByTestId(@Path("id") long id);
+
+    @GET("/api/v1/results/test/{test_id}/{user_id}")
+    Call<List<ResultTest>>  getAllResultByTestIdAndUserId(@Path("test_id") long test_id, @Path("user_id") long user_id);
+
 }

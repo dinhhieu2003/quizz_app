@@ -24,7 +24,7 @@
             android:layout_height="230dp"
             android:layout_gravity="center_horizontal|center"
             android:background="@drawable/circular_card"
-            android:backgroundTint="@color/pink_glamour">
+            android:backgroundTint="#fdcb6e">
 
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -34,7 +34,7 @@
                 android:layout_gravity="center_horizontal"
                 android:paddingTop="25dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/avt_icon">
+                android:src="@drawable/user">
 
             </de.hdodenhof.circleimageview.CircleImageView>
 

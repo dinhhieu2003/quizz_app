@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:id="@+id/tooltst">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbartst"
+            app:navigationIcon="@drawable/ic_keyboard_arrow_left_black_24dp"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?android:attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Thông tin học sinh"
+                android:fontFamily="@font/lato_black"
+                android:textColor="@color/bg_main"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:gravity="center">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/USERIMAGE"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/user">
+
+            </de.hdodenhof.circleimageview.CircleImageView>
+        </TableRow>
+    </TableLayout>
+
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_main"
+            android:text="Mã học sinh"
+            android:fontFamily="@font/lato_black"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/StudentID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
+            android:text="Details not added yet"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_main"
+            android:fontFamily="@font/lato_black"
+            android:text="Họ và tên"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/FnameID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
+            android:text="Details not added yet"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/lato_black"
+            android:background="@color/bg_main"
+            android:text="Tuổi tác"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/AgeID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
+            android:text="Details not added yet"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/bg_main"
+            android:fontFamily="@font/lato_black"
+            android:text="Email"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/EmailID"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            android:fontFamily="@font/lato_bold"
+            android:text="Details not added yet"
+            android:padding="5dp"
+            android:textSize="10sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </TableRow>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/this_Section"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Điểm số của bài thi này là: "
+                android:fontFamily="@font/lato_black"
+                android:textColor="@color/bg_main"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/this_Section_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Số bài đã làm trên app: "
+                android:fontFamily="@font/lato_black"
+                android:textColor="@color/bg_main"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>
