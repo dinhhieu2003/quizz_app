@@ -10,6 +10,9 @@ public class Test implements Serializable {
     private List<ResultTest> resultList;
     private int time;
 
+    public Test() {
+    }
+
     public Test(long id, String name, List<Question> questionList, List<ResultTest> resultList, int time) {
         this.id = id;
         this.name = name;

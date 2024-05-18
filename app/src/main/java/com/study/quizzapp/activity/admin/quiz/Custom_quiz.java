@@ -1,5 +1,6 @@
 package com.study.quizzapp.activity.admin.quiz;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -17,32 +18,30 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
 import com.study.quizzapp.R;
+import com.study.quizzapp.api.QuestionApi;
+import com.study.quizzapp.api.TestApi;
+import com.study.quizzapp.dto.request.ListQuestionTestDTO;
 import com.study.quizzapp.model.Question;
+import com.study.quizzapp.model.Test;
+import com.study.quizzapp.retrofit.RetrofitService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Custom_quiz extends AppCompatActivity{
 
-    EditText question;
-    EditText aText;
-    EditText bText;
-    EditText cText;
-    EditText dText;
-    RadioButton aRadio;
-    RadioButton bRadio;
-    RadioButton cRadio;
-    RadioButton dRadio;
+    EditText question, aText, bText, cText, dText;
+    RadioButton aRadio, bRadio, cRadio, dRadio;
 
     int currentQuestion = 1;
     int previousQuestion = 1;
@@ -54,12 +53,10 @@ public class Custom_quiz extends AppCompatActivity{
 
     Button save_button;
     AlertDialog alertDialog;
-    private View dialogvView;
     String fileName = "file";
-//    private FirebaseDatabase database;
-//    private FirebaseAuth auth;
-//    private DatabaseReference myRef;
     CardView fab,f2,fl;
+    private TestApi restMethod;
+    private QuestionApi restMethod_Question;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,9 +76,7 @@ public class Custom_quiz extends AppCompatActivity{
         bRadio =  findViewById(R.id.bRadio);
         cRadio =  findViewById(R.id.cRadio);
         dRadio =  findViewById(R.id.dRadio);
-//        auth = FirebaseAuth.getInstance();
-//        database= FirebaseDatabase.getInstance();
-//        myRef=database.getReference();
+
         selectedOption = "";
         currentQuestion = 1;
         setListeners();
@@ -90,9 +85,6 @@ public class Custom_quiz extends AppCompatActivity{
 
         alertDialog = new AlertDialog.Builder(this).create();
         LayoutInflater inflater = this.getLayoutInflater();
-        dialogvView = inflater.inflate(R.layout.dialog_custom,null);
-
-
 
         fab = findViewById(R.id.nextfab);
         fl = findViewById(R.id.fab2);//save button
@@ -133,7 +125,7 @@ public class Custom_quiz extends AppCompatActivity{
                 {
                     previousQuestion++;
                     currentQuestion++;
-                    Toast.makeText(Custom_quiz.this, "QUESTION " + currentQuestion, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Custom_quiz.this, "Câu hỏi " + currentQuestion, Toast.LENGTH_SHORT).show();
                     questionNumber.setText(String.valueOf(currentQuestion));
                     clearAllData();
                     f2.setVisibility(View.VISIBLE);
@@ -144,9 +136,8 @@ public class Custom_quiz extends AppCompatActivity{
         fl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(jsonArray.length()!=0)
+                if(ques.size() != 0)
                 {
-                    final JSONObject tempObject = new JSONObject();
                     // get dialog_custom.xml view
                     LayoutInflater li = LayoutInflater.from(Custom_quiz.this);
                     View promptsView = li.inflate(R.layout.dialog_custom, null);
@@ -155,7 +146,7 @@ public class Custom_quiz extends AppCompatActivity{
 
                     // set dialog_custom.xml to alertdialog builder
                     alertDialogBuilder.setView(promptsView);
-                    final EditText userInput =  promptsView
+                    final EditText userTestName =  promptsView
                             .findViewById(R.id.editTextDialogUserInput);
                     final EditText userTime = promptsView.findViewById(R.id.editTextDialogUserInput1);
 
@@ -166,28 +157,15 @@ public class Custom_quiz extends AppCompatActivity{
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog,int id) {
 
-                                            final String str = userTime.getText().toString();
-                                            String temp2 = str;
-                                            ////  Log.d("TIMEON",userTime.getText().toString().trim());
-                                            try {
-                                                tempObject.put("Questions",jsonArray);
-                                                final String TIME = userTime.getText().toString().trim();
-                                                tempObject.put("Time",Integer.parseInt(temp2));
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                            final String jsonStr = tempObject.toString();
-                                            // get user input and set it to result
-                                            // edit text
-                                            if (str != null ) {
-                                                Toast.makeText(getApplicationContext()
-                                                        , str, Toast.LENGTH_LONG).show();
-//                                         result.setText(userInput.getText());
-                                                Map<String, Object> result = new Gson().fromJson(jsonStr, Map.class);
-                                                fileName = userInput.getText().toString().trim();
-//                                                if (!TextUtils.isEmpty(fileName))
-//                                                    myRef.child("tests").child(fileName).setValue(result);
-                                            }
+                                            final int time = Integer.parseInt(userTime.getText().toString());
+                                            final String testName = userTestName.getText().toString();
+                                            Test newTest = new Test();
+                                            newTest.setName(testName);
+                                            newTest.setTime(time);
+
+                                            // save Test
+                                            saveTest(newTest);
+
                                         }
                                     })
                             .setNegativeButton("Cancel",
@@ -204,13 +182,55 @@ public class Custom_quiz extends AppCompatActivity{
                 else
                 {
                     Toasty.error(getApplicationContext(),
-                            "Incomplete Question format", Toasty.LENGTH_SHORT).show();
+                            "Bạn chưa hoàn thành form", Toasty.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
 
+    private void saveAllQuestion(ArrayList<Question> questions, Test test) {
+        restMethod_Question = RetrofitService.getRetrofit().create(QuestionApi.class);
+        ListQuestionTestDTO listQuestionTestDTO = new ListQuestionTestDTO(questions, test);
+        restMethod_Question.addAllQuestion(listQuestionTestDTO).enqueue(new Callback<List<Question>>() {
+            @Override
+            public void onResponse(Call<List<Question>> call, Response<List<Question>> response) {
+                Log.d("Add Question api call success", response.body().get(0).getQuestion());
+                Toasty.normal(Custom_quiz.this, "Thêm câu hỏi thành công").show();
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<List<Question>> call, Throwable throwable) {
+                Log.d("Add Question api call failed", throwable.getMessage());
+                Toasty.error(Custom_quiz.this, throwable.getMessage(), Toast.LENGTH_SHORT, true).show();
+            }
+        });
+    }
+
+    private void saveTest(Test test) {
+        Log.d("In save Test", test.getName());
+        restMethod = RetrofitService.getRetrofit().create(TestApi.class);
+        try {
+            restMethod.add(test).enqueue(new Callback<Test>() {
+                @Override
+                public void onResponse(Call<Test> call, Response<Test> response) {
+                    assert response.body() != null;
+                    Log.d("Add Test api call success", response.body().getName());
+                    Test testsaved = response.body();
+                    saveAllQuestion(ques, testsaved);
+                }
+                @Override
+                public void onFailure(Call<Test> call, Throwable throwable) {
+                    Log.d("Add Test api call failed", throwable.getMessage());
+                    Toasty.error(Custom_quiz.this, throwable.getMessage(), Toast.LENGTH_SHORT, true).show();
+                }
+            });
+        } catch (Exception e) {
+            Toasty.error(Custom_quiz.this, e.getMessage(), Toast.LENGTH_SHORT, true).show();
+        }
+
+    }
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -279,26 +299,25 @@ public class Custom_quiz extends AppCompatActivity{
 
         boolean cont = false;
         if (TextUtils.isEmpty(question.getText().toString().trim())) {
-            question.setError("Please fill in a question");
+            question.setError("Hãy điền câu hỏi");
         }
         else if (TextUtils.isEmpty(aText.getText().toString().trim())) {
-            aText.setError("Please fill in option A");
+            aText.setError("Hãy điền đáp án A");
         }
         else if (TextUtils.isEmpty(bText.getText().toString().trim())) {
-            bText.setError("Please fill in option B");
+            bText.setError("Hãy điền đáp án B");
         }
         else if (TextUtils.isEmpty(cText.getText().toString().trim())) {
-            cText.setError("Please fill in option C");
+            cText.setError("Hãy điền đáp án C");
         }
         else if (TextUtils.isEmpty(dText.getText().toString().trim())) {
-            dText.setError("Please fill in option D");
+            dText.setError("Hãy điền đáp án D");
         }
         else if (selectedOption.equals("")) {
-            Toast.makeText(this, "Please select the correct answer", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Hãy chọn đáp án đúng cho câu hỏi", Toast.LENGTH_SHORT).show();
         }
         else {
             Question quest = new Question();
-            quest.setId(currentQuestion);
             quest.setQuestion(question.getText().toString());
             quest.setOpt_A(aText.getText().toString());
             quest.setOpt_B(bText.getText().toString());
@@ -307,21 +326,6 @@ public class Custom_quiz extends AppCompatActivity{
             quest.setAnswer(selectedOption);
             ques.add(quest);
             cont = true;
-
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("answer",selectedOption);
-                jsonObject.put("opt_A",aText.getText().toString().trim());
-                jsonObject.put("opt_B",bText.getText().toString().trim());
-                jsonObject.put("opt_C",cText.getText().toString().trim());
-                jsonObject.put("opt_D",dText.getText().toString().trim());
-                jsonObject.put("question",question.getText().toString().trim());
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            jsonArray.put(jsonObject);
         }
         return cont;
     }

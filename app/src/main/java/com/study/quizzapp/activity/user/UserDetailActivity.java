@@ -66,7 +66,7 @@ public class UserDetailActivity extends AppCompatActivity {
 
     private void countTest() {
         restMethod_Result = RetrofitService.getRetrofit().create(ResultApi.class);
-        restMethod_Result.getAllResultByUserId(SharedPrefManager.getInstance(this).getUser().getId()).enqueue(new Callback<List<ResultTest>>() {
+        restMethod_Result.getAllResultByUserId((getIntent().getLongExtra("USERID", 0))).enqueue(new Callback<List<ResultTest>>() {
             @Override
             public void onResponse(@NonNull Call<List<ResultTest>> call, @NonNull Response<List<ResultTest>> response) {
                 result.clear();
@@ -90,7 +90,6 @@ public class UserDetailActivity extends AppCompatActivity {
                 Log.e("The read failed: ", Objects.requireNonNull(throwable.getMessage()));
             }
         });
-        Log.d("Sai nua thi chiu", String.valueOf(result.size()));
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

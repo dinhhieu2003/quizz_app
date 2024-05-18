@@ -137,6 +137,7 @@ public class MainActivity extends AppCompatActivity
                 Log.e("The read failed: ", Objects.requireNonNull(throwable.getMessage()));
             }
         });
+        Log.d("Main count test", String.valueOf(result.size()));
     }
 
     private void setWelcomeUser() {

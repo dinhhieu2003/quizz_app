@@ -12,9 +12,6 @@ public class Splash_create_quiz extends AwesomeSplash{
     private boolean isAdmin = false;
     @Override
     public void initSplash(ConfigSplash configSplash) {
-
-
-        isAdmin = getIntent().getBooleanExtra("ChatAdmin",false);
         configSplash.setBackgroundColor(R.color.btn_logout_bg); //any color you want form colors.xml
         configSplash.setAnimCircularRevealDuration(500); //int ms
         configSplash.setRevealFlagX(Flags.REVEAL_RIGHT);  //or Flags.REVEAL_LEFT
