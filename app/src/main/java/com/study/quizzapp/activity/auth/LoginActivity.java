@@ -23,6 +23,7 @@ import com.study.quizzapp.model.User;
 import com.study.quizzapp.retrofit.RetrofitService;
 import com.study.quizzapp.sharedpref.SharedPrefManager;
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -96,14 +97,19 @@ public class LoginActivity extends AppCompatActivity {
         restMethods.login(emailRequestBody,  passwordRequestBody).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                UserDTO userDTO = response.body().getUser();
-                Log.d("Success login", response.body().getMessage().toString());
-                User user = new User(userDTO.getId(), userDTO.getFname(), userDTO.getAge(), userDTO.getEmail(),"",
-                        userDTO.getRole());
-                SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
-                finish();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                assert response.body() != null;
+                if(response.body().getError() == true) {
+                    Toasty.error(getApplicationContext(), response.body().getMessage(), Toasty.LENGTH_SHORT).show();
+                } else {
+                    UserDTO userDTO = response.body().getUser();
+                    Log.d("Success login", response.body().getMessage().toString());
+                    User user = new User(userDTO.getId(), userDTO.getFname(), userDTO.getAge(), userDTO.getEmail(),"",
+                            userDTO.getRole());
+                    SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+                    finish();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
 
             @Override

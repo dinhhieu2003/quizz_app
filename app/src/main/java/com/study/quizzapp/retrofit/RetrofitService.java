@@ -12,7 +12,7 @@ public class RetrofitService {
     public static Retrofit getRetrofit() {
         if(retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.42.197:8080")
+                    .baseUrl("https://quizzserver-ol4w.onrender.com")
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
