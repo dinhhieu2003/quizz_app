@@ -30,6 +30,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.study.quizzapp.activity.admin.quiz.create_quiz_main;
 import com.study.quizzapp.activity.auth.LoginActivity;
+import com.study.quizzapp.activity.auth.ResetPasswordActivity;
 import com.study.quizzapp.activity.result.ResultActivity;
 import com.study.quizzapp.activity.result.ResultDetailActivity;
 import com.study.quizzapp.activity.test.ViewTestActivity;
@@ -191,8 +192,8 @@ public class MainActivity extends AppCompatActivity
                 alertNoConnection();
         } else if (id == R.id.nav_respass) {
             if (isNetworkAvailable(MainActivity.this)) {
-//                startActivity(new Intent(MainActivity.this, ResetPasswordActivity.class));
-//                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                startActivity(new Intent(MainActivity.this, ResetPasswordActivity.class));
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
             else
                 alertNoConnection();

@@ -2,6 +2,7 @@ package com.study.quizzapp.api;
 
 import com.study.quizzapp.dto.response.LoginResponse;
 import com.study.quizzapp.dto.response.SignupResponse;
+import com.study.quizzapp.dto.response.TokenResponse;
 
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -19,4 +20,8 @@ public interface AuthApi {
     @Multipart
     Call<SignupResponse> signup(@Part("email") RequestBody email, @Part("password") RequestBody password,
                                 @Part("fname") RequestBody fname, @Part("age") RequestBody age);
+
+    @POST("/api/v1/auth/forgotpassword")
+    @Multipart
+    Call<TokenResponse> forgotpassword(@Part("email") RequestBody email);
 }
