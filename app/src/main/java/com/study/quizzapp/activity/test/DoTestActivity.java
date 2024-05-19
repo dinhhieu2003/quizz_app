@@ -249,7 +249,7 @@ public class DoTestActivity extends AppCompatActivity {
                 AlertDialog.Builder builderInner = new AlertDialog.Builder(DoTestActivity.this);
                 builderInner.setMessage(strName);
                 builderInner.setCancelable(false);
-                builderInner.setTitle("Your Selected Question Answer is");
+                builderInner.setTitle("Đáp án mà bạn lựa chọn là: ");
                 builderInner.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog,int which) {

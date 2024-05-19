@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputPassword;
     private Button btnSignup, btnLogin, btnReset;
-//    private ProgressBar progressBar;
+    private ProgressBar progressBar;
     private AuthApi restMethods;
     private String TAG = LoginActivity.class.getSimpleName();
 
@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // DO LOGIN
                 login();
             }
         });
@@ -84,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
             inputPassword.requestFocus();
             return;
         }
-        //showLoading();
+        progressBar.setVisibility(View.VISIBLE);
         // Tạo RequestBody cho username
         RequestBody emailRequestBody = RequestBody.create(MediaType.parse("text/plain"), email);
 
@@ -93,19 +92,22 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("email", emailRequestBody.toString());
         Log.d("password", passwordRequestBody.toString());
+
         restMethods = RetrofitService.getRetrofit().create(AuthApi.class);
         restMethods.login(emailRequestBody,  passwordRequestBody).enqueue(new Callback<LoginResponse>() {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
-                assert response.body() != null;
+                assert response.body() != null;;
                 if(response.body().getError() == true) {
                     Toasty.error(getApplicationContext(), response.body().getMessage(), Toasty.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 } else {
                     UserDTO userDTO = response.body().getUser();
                     Log.d("Success login", response.body().getMessage().toString());
                     User user = new User(userDTO.getId(), userDTO.getFname(), userDTO.getAge(), userDTO.getEmail(),"",
                             userDTO.getRole());
                     SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+                    progressBar.setVisibility(View.GONE);
                     finish();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
@@ -123,17 +125,6 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-//    private void showLoading() {
-//        if (progressBar != null) {
-//            this.progressBar.setVisibility(View.VISIBLE);
-//        }
-//    }
-//
-//    private void hideLoading() {
-//        if (progressBar != null) {
-//            progressBar.setVisibility(View.GONE);
-//        }
-//    }
 
     private void init() {
         setContentView(R.layout.activity_login);
@@ -146,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignup =  findViewById(R.id.btn_signup);
         btnLogin =  findViewById(R.id.btn_login);
         btnReset =  findViewById(R.id.btn_reset_password);
-//        progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar_login);
+        progressBar.setVisibility(View.GONE);
     }
 }

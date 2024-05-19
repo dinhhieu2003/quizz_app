@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.study.quizzapp.R;
 import com.study.quizzapp.api.AuthApi;
@@ -24,6 +25,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private EditText inputEmail;
     private Button btnReset, btnBack;
     private AuthApi restMethods;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,11 +55,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
             inputEmail.requestFocus();
             return;
         }
+        progressBar.setVisibility(View.VISIBLE);
         RequestBody emailRequestBody = RequestBody.create(MediaType.parse("text/plain"), email);
         restMethods = RetrofitService.getRetrofit().create(AuthApi.class);
         restMethods.forgotpassword(emailRequestBody).enqueue(new Callback<TokenResponse>() {
             @Override
             public void onResponse(Call<TokenResponse> call, Response<TokenResponse> response) {
+                progressBar.setVisibility(View.GONE);
                 TokenResponse tokenResponse = response.body();
                 if(tokenResponse.isError()) {
                     Toasty.error(getApplicationContext(), tokenResponse.getMessage(), Toasty.LENGTH_SHORT).show();
@@ -68,6 +72,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<TokenResponse> call, Throwable throwable) {
+                progressBar.setVisibility(View.GONE);
                 Toasty.error(getApplicationContext(), throwable.getMessage(), Toasty.LENGTH_SHORT).show();
             }
         });
@@ -77,5 +82,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         inputEmail =  findViewById(R.id.email);
         btnReset =  findViewById(R.id.btn_reset_password);
         btnBack =  findViewById(R.id.btn_back);
+        progressBar = findViewById(R.id.progressBar_reset);
+        progressBar.setVisibility(View.GONE);
     }
 }

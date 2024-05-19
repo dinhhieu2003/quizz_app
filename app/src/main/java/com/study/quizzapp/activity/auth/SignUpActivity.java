@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.study.quizzapp.R;
@@ -18,6 +19,7 @@ import com.study.quizzapp.dto.response.SignupResponse;
 import com.study.quizzapp.retrofit.RetrofitService;
 
 
+import es.dmoral.toasty.Toasty;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -29,6 +31,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword, inputName, inputAge;
     private Button btnSignIn, btnSignUp, btnResetPassword;
     private AuthApi restMethods;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,6 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
             inputAge.setError("Please enter your age");
             inputAge.requestFocus();
         }
+        progressBar.setVisibility(View.VISIBLE);
 
         // Tạo RequestBody cho username
         RequestBody emailRequestBody = RequestBody.create(MediaType.parse("text/plain"), email);
@@ -98,13 +102,21 @@ public class SignUpActivity extends AppCompatActivity {
         restMethods.signup(emailRequestBody, passwordRequestBody, fnameRequestBody, ageRequestBody).enqueue(new Callback<SignupResponse>() {
             @Override
             public void onResponse(@NonNull Call<SignupResponse> call, @NonNull Response<SignupResponse> response) {
+                progressBar.setVisibility(View.GONE);
+                if(response.body().getError() == false) {
+                    //Response was successfull
+                    progressBar.setVisibility(View.GONE);
+                    Log.i("signup success", "Response: " + response.body());
+                    Toasty.success(SignUpActivity.this, "Đăng ký thành công", Toasty.LENGTH_SHORT).show();
+                    finish();
+                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Log.i("signup failed", "Response: " + response.body());
+                    Toasty.error(SignUpActivity.this, response.body().getMessage(), Toasty.LENGTH_SHORT).show();
+                }
 
-                //Response was successfull
-                Log.i("signup success", "Response: " + response.body());
-
-                finish();
-                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                startActivity(intent);
             }
 
             @Override
@@ -127,5 +139,7 @@ public class SignUpActivity extends AppCompatActivity {
         inputName = findViewById(R.id.name);
         inputAge = findViewById(R.id.age);
         btnResetPassword =  findViewById(R.id.btn_reset_password);
+        progressBar = findViewById(R.id.progressBar_signup);
+        progressBar.setVisibility(View.GONE);
     }
 }
